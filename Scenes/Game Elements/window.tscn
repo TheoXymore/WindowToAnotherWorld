@@ -16,6 +16,7 @@ Panel/styles/panel = SubResource("StyleBoxFlat_uub2h")
 [node name="Window" type="Control" unique_id=2122220708]
 layout_mode = 3
 anchors_preset = 0
+size_flags_horizontal = 4
 script = ExtResource("1_weovs")
 
 [node name="Borders" type="Panel" parent="." unique_id=894683266]

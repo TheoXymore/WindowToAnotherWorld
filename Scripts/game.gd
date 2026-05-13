@@ -8,6 +8,8 @@ var currentLevel:Level
 var window:PuzzleWindow
 var moving_window:bool = false
 var mouse_offset
+var rotating_window:bool = false
+var initial_rotation
 
 #For the shader
 var shader_group:CanvasGroup = CanvasGroup.new()
@@ -45,18 +47,30 @@ func _process(_delta: float) -> void:
 		mat.set_shader_parameter("window_center",window.global_position + window.get_window_size()/2)
 		mat.set_shader_parameter("window_size",window.get_window_size())
 		
-		DisplayServer.window_set_mouse_passthrough(make_window_array())
+		#Allows us to interact with stuff behind the game (but it slows the game a lot and is not precise because of the borders of the window)    
+		#DisplayServer.window_set_mouse_passthrough(make_window_array()) 
 		
 		if moving_window:
 			window.position = get_global_mouse_position() - mouse_offset
+			
+		if rotating_window:
+			pass
 		
 func on_window_input(event:InputEvent):
 	if event is InputEventMouseButton:
 		if event.pressed :
-			mouse_offset = event.position 
-			moving_window = true
+			match event.button_index :
+				MouseButton.MOUSE_BUTTON_LEFT:
+					mouse_offset = event.position 
+					moving_window = true
+				MouseButton.MOUSE_BUTTON_RIGHT:
+					var window_center = window.global_position + window.size/2
+					initial_rotation = (event.global_position - window_center).angle()
+					rotating_window = true
+					pass
 		elif not event.pressed :
 			moving_window = false
+			rotating_window = false
 			
 func make_window_array()->PackedVector2Array:
 	var array = []
