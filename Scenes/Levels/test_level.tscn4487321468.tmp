@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://w1bpcd234wis"]
+
+[ext_resource type="Texture2D" uid="uid://bw2inu3rnttjx" path="res://icon.svg" id="1_7t06c"]
+[ext_resource type="Script" uid="uid://xvuqitc480gu" path="res://Scripts/Level.gd" id="1_b07c4"]
+
+[node name="TestLevel" type="Node2D" unique_id=943087571]
+script = ExtResource("1_b07c4")
+metadata/_custom_type_script = "uid://xvuqitc480gu"
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=508537100]
+position = Vector2(448, 139)
+texture = ExtResource("1_7t06c")
+
+[node name="Sprite2D3" type="Sprite2D" parent="." unique_id=372443039]
+position = Vector2(902, 392)
+scale = Vector2(1.453125, 2.40625)
+texture = ExtResource("1_7t06c")
+
+[node name="Sprite2D2" type="Sprite2D" parent="." unique_id=293273178]
+position = Vector2(321, 464)
+scale = Vector2(1, 0.4140625)
+texture = ExtResource("1_7t06c")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1550718084]
+offset_left = 507.0
+offset_top = 315.0
+offset_right = 639.0
+offset_bottom = 444.0
