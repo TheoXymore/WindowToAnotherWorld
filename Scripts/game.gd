@@ -10,6 +10,8 @@ var moving_window:bool = false
 var mouse_offset
 var rotating_window:bool = false
 var initial_rotation
+var window_center
+var window_initial_rotation
 
 #For the shader
 var shader_group:CanvasGroup = CanvasGroup.new()
@@ -31,6 +33,7 @@ func _ready() -> void:
 	window = windowRes.instantiate()
 	window.gui_input.connect(on_window_input)
 	add_child(window)
+	window.global_position = get_viewport().get_visible_rect().size / 2
 	
 	#For the shader 
 	shader_material.shader = preload("res://Scripts/game_vizualiser.gdshader")
@@ -44,28 +47,37 @@ func _process(_delta: float) -> void:
 		
 	if window:
 		var mat = shader_group.material as ShaderMaterial
-		mat.set_shader_parameter("window_center",window.global_position + window.get_window_size()/2)
+		mat.set_shader_parameter("window_center",window.global_position)
 		mat.set_shader_parameter("window_size",window.get_window_size())
+		mat.set_shader_parameter("window_rotation", window.rotation)
 		
-		#Allows us to interact with stuff behind the game (but it slows the game a lot and is not precise because of the borders of the window)    
-		#DisplayServer.window_set_mouse_passthrough(make_window_array()) 
+		#Allows us to interact with stuff behind the game 
+		#(but it slows the game a lot and is not precise because of the borders of the window)
+		#And it still needs to take the rotation into account    
+		#DisplayServer.window_set_mouse_passthrough(make_window_array())
 		
 		if moving_window:
 			window.position = get_global_mouse_position() - mouse_offset
 			
+			
+			
 		if rotating_window:
-			pass
+			var current_mouse_pos = get_global_mouse_position()
+			var angleB = (current_mouse_pos - window_center).angle()
+			var delta_angle = angleB - initial_rotation
+			window.rotation = window_initial_rotation + delta_angle
 		
 func on_window_input(event:InputEvent):
 	if event is InputEventMouseButton:
 		if event.pressed :
 			match event.button_index :
 				MouseButton.MOUSE_BUTTON_LEFT:
-					mouse_offset = event.position 
+					mouse_offset = get_global_mouse_position() - window.position
 					moving_window = true
 				MouseButton.MOUSE_BUTTON_RIGHT:
-					var window_center = window.global_position + window.size/2
+					window_center = window.global_position + window.size/2
 					initial_rotation = (event.global_position - window_center).angle()
+					window_initial_rotation = window.rotation
 					rotating_window = true
 					pass
 		elif not event.pressed :
@@ -74,9 +86,9 @@ func on_window_input(event:InputEvent):
 			
 func make_window_array()->PackedVector2Array:
 	var array = []
-	array.append(window.position + Vector2(-10,-40))
-	array.append(window.position + Vector2(window.get_window_size().x + 10,-40))
-	array.append(window.position + window.get_window_size() + Vector2(10,10))
-	array.append(window.position + Vector2(-10,window.get_window_size().y +10))
+	array.append(window.position - window.get_window_size() / 2)
+	array.append(window.position + Vector2(window.get_window_size().x/2,-window.get_window_size().y/2))
+	array.append(window.position + window.get_window_size()/2)
+	array.append(window.position + Vector2(-window.get_window_size().x/2,window.get_window_size().y))
 	return array
 			
